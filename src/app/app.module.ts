@@ -1,11 +1,37 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { HttpModule } from '@nestjs/axios';
+import qs from 'qs';
+import appConfig from './app.config';
+import { TaxModule } from './tax/tax.module';
 
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+export function paramsSerializer(params) {
+  return qs.stringify(params, {
+    arrayFormat: 'repeat',
+    allowDots: true,
+  });
+}
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      expandVariables: true,
+      load: [],
+      validationSchema: appConfig,
+      validationOptions: {
+        abortEarly: true,
+      },
+    }),
+    HttpModule.register({
+      paramsSerializer: {
+        serialize: paramsSerializer,
+      },
+    }),
+
+    TaxModule,
+  ],
+  controllers: [],
+  providers: [Logger],
 })
 export class AppModule {}
