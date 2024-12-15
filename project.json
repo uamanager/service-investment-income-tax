@@ -9,9 +9,7 @@
     "serve": {
       "executor": "@nx/js:node",
       "defaultConfiguration": "development",
-      "dependsOn": [
-        "build"
-      ],
+      "dependsOn": ["build"],
       "options": {
         "buildTarget": "investment-income-tax:build",
         "runBuildTargetDependencies": false
@@ -24,12 +22,6 @@
           "buildTarget": "investment-income-tax:build:production"
         }
       }
-    },
-    "docker-build": {
-      "dependsOn": [
-        "build"
-      ],
-      "command": "docker build -f Dockerfile . -t investment-income-tax"
     }
   }
 }
