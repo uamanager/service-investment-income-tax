@@ -3,8 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "start": "nx serve",
-    "build": "nx build",
+    "start": "nx run server:serve",
     "prepare": "husky",
     "commit": "commit",
     "semantic-release": "semantic-release",
@@ -67,6 +66,7 @@
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.17.10",
+    "@types/supertest": "^6.0.2",
     "@typescript-eslint/eslint-plugin": "^8.13.0",
     "@typescript-eslint/parser": "^8.13.0",
     "@typescript-eslint/utils": "^8.13.0",
@@ -78,6 +78,7 @@
     "nx": "20.2.2",
     "prettier": "^2.6.2",
     "semantic-release": "^24.2.0",
+    "supertest": "^7.0.0",
     "ts-jest": "^29.1.0",
     "ts-node": "10.9.2",
     "tslib": "^2.3.0",
@@ -91,8 +92,5 @@
     "nanoid": "^3.3.8",
     "express/path-to-regexp": "^0.1.12",
     "@eslint/plugin-kit": "^0.2.3"
-  },
-  "nx": {
-    "includedScripts": []
   }
 }
