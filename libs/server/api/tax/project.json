@@ -1,0 +1,9 @@
+{
+  "name": "server-api-tax",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/server/api/tax/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project tax --web",
+  "targets": {}
+}
