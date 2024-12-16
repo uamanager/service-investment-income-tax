@@ -1,0 +1,9 @@
+{
+  "name": "server-domain-rate",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/server/domain/rate/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project rate --web",
+  "targets": {}
+}
