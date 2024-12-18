@@ -2,8 +2,8 @@ name: DockerBuild/Push Workflow
 description: Build and Push Image to Docker Registry
 
 inputs:
-  docker-path:
-    description: 'Docker path, e.g. apps/server'
+  docker-image-path:
+    description: 'Docker image path, e.g. apps/server'
     required: true
   docker-registry:
     description: 'Docker registry name, e.g. registry.hub.docker.com'
@@ -23,26 +23,26 @@ runs:
 
     - name: Check if image exists
       run: |
-        IMAGE_EXISTS=$(docker pull ${{ inputs.docker-registry }}/${{ inputs.docker-repository }}:$COMMIT_HASH > /dev/null 2>&1 && echo true || echo false)
+        IMAGE_EXISTS=$(docker pull ${{ inputs.docker-registry }}/${{ inputs.docker-image-path }}:$COMMIT_HASH > /dev/null 2>&1 && echo true || echo false)
         echo "IMAGE_EXISTS=$IMAGE_EXISTS" >> $GITHUB_ENV
       shell: bash
 
     - name: Build and tag Docker image
       if: env.IMAGE_EXISTS == 'false' || inputs.docker-tag != 'latest'
       run: |
-        docker build -t ${{ inputs.docker-repository }}:$COMMIT_HASH .
-        docker tag ${{ inputs.docker-repository }}:$COMMIT_HASH ${{ inputs.docker-registry }}/${{ inputs.docker-repository }}:$COMMIT_HASH
+        docker build -t ${{ inputs.docker-image-path }}:$COMMIT_HASH .
+        docker tag ${{ inputs.docker-image-path }}:$COMMIT_HASH ${{ inputs.docker-registry }}/${{ inputs.docker-image-path }}:$COMMIT_HASH
       shell: bash
 
     - name: Push Docker image to registry
       if: env.IMAGE_EXISTS == 'false' || inputs.docker-tag != 'latest'
-      run: docker push ${{ inputs.docker-registry }}/${{ inputs.docker-repository }}:$COMMIT_HASH
+      run: docker push ${{ inputs.docker-registry }}/${{ inputs.docker-image-path }}:$COMMIT_HASH
       shell: bash
 
     - name: Add custom tag
-      run: docker tag ${{ inputs.docker-registry }}/${{ inputs.docker-repository }}:$COMMIT_HASH ${{ inputs.docker-registry }}/${{ inputs.docker-repository }}:${{ inputs.docker-tag }}
+      run: docker tag ${{ inputs.docker-registry }}/${{ inputs.docker-image-path }}:$COMMIT_HASH ${{ inputs.docker-registry }}/${{ inputs.docker-image-path }}:${{ inputs.docker-tag }}
       shell: bash
 
     - name: Push custom tag to registry
-      run: docker push ${{ inputs.docker-registry }}/${{ inputs.docker-repository }}:${{ inputs.docker-tag }}
+      run: docker push ${{ inputs.docker-registry }}/${{ inputs.docker-image-path }}:${{ inputs.docker-tag }}
       shell: bash

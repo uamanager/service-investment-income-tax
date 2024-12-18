@@ -43,5 +43,5 @@ jobs:
       - name: Build and Push Image Step
         uses: ./.github/workflows/actions/docker/build-push
         with:
-          docker-path: ${{ vars.DOCKER_PATH }}
+          docker-image-path: ${{ vars.DOCKER_IMAGE_PATH }}
           docker-registry: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com
