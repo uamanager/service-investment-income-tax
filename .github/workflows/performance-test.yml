@@ -1,0 +1,28 @@
+name: Performance Test Workflow
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  artillery:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Make performance test reports directory
+        run: mkdir reports
+
+      - name: Execute performance tests
+        uses: artilleryio/action-cli@v1
+        with:
+          command: run tools/perf/tax-calculate.perf.yml --output reports/report.json --tags ci:true,owner:qa,type:baseline,repo:repo_name,commit:`git rev-parse --short HEAD`
+      - name: Upload performance test report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: artillery-report
+          path: ./reports/report.json
