@@ -1,4 +1,4 @@
-name: DockerBuild/Push Workflow
+name: Docker Build/Push Workflow
 description: Build and Push Image to Docker Registry
 
 inputs:
