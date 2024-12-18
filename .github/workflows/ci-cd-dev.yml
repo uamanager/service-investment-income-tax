@@ -22,7 +22,7 @@ jobs:
     needs: lint-test-build
     environment:
       name: DEV
-      url: {{ vars.URL }}
+      url: https://dev.tax.uamanager.dev
     runs-on: ubuntu-latest
 
     steps:
