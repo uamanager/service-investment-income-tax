@@ -10,7 +10,7 @@ FROM node:lts-alpine
 
 WORKDIR /investment-income-tax
 
-COPY --from=build-env /dist/apps/server ./
+COPY --from=build-env /investment-income-tax/dist/apps/server ./
 
 RUN yarn install --frozen-lockfile --production
 
