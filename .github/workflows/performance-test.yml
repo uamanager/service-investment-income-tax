@@ -19,7 +19,7 @@ jobs:
       - name: Execute performance tests
         uses: artilleryio/action-cli@v1
         with:
-          command: run tools/perf/tax-calculate.perf.yml --output reports/report.json --tags ci:true,owner:qa,type:baseline,repo:repo_name,commit:`git rev-parse --short HEAD`
+          command: run tools/perf/tax-calculate.perf.yml --output reports/report.json --tags ci:true,repo:repo_name,,commit:${{ github.sha }}
       - name: Upload performance test report
         uses: actions/upload-artifact@v4
         if: always()
