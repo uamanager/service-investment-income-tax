@@ -56,7 +56,7 @@ jobs:
           task-definition: ./.aws/ecs/task-definition.json
           task-definition-family: ${{ vars.AWS_ECS_TASK }}
           container-name: ${{ vars.AWS_ECS_CONTAINER }}
-          image: ${{ steps.build-and-push-image.image }}
+          image: ${{ steps.build-and-push-image.outputs.image }}
           task-definition-revision: ${{ github.sha }}
           log-configuration-log-driver: awslogs
           log-configuration-options: |
