@@ -54,6 +54,7 @@ jobs:
           export AWS_ECS_TASK=${{ vars.AWS_ECS_TASK }}
           export AWS_ECS_CONTAINER=${{ vars.AWS_ECS_CONTAINER }}
           export AWS_ECS_PORT_TCP_80_NAME=${{ vars.AWS_ECS_PORT_TCP_80_NAME }}
+          export AWS_ECS_TASK_EXECUTION_ROLE_ARN=${{ vars.AWS_ECS_TASK_EXECUTION_ROLE_ARN }}
           envsubst < ./.aws/ecs/task-definition-template.json > ./.aws/ecs/task-definition.json
         shell: bash
 
