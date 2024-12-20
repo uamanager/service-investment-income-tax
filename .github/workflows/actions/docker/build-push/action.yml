@@ -45,5 +45,5 @@ runs:
         docker push $IMAGE_WITH_TAG || exit 1
 
         # Output the image with tag for further steps
-        echo "image=$IMAGE_WITH_TAG" >> $GITHUB_OUTPUT
+        echo "image=$(echo IMAGE_WITH_TAG)" >> $GITHUB_OUTPUT
       shell: bash
