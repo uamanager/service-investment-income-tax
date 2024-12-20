@@ -17,32 +17,29 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Determine git commit hash
-      run: echo "COMMIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-      shell: bash
-
-    - name: Check if image exists
+    - name: Build and push Docker image Step
       run: |
-        IMAGE_EXISTS=$(docker pull ${{ inputs.docker-registry }}/${{ inputs.docker-image-path }}:$COMMIT_HASH > /dev/null 2>&1 && echo true || echo false)
-        echo "IMAGE_EXISTS=$IMAGE_EXISTS" >> $GITHUB_ENV
-      shell: bash
+        # Determine commit hash and image base
+        COMMIT_HASH=$(git rev-parse --short HEAD)
+        DOCKER_IMAGE_BASE=${{ inputs.docker-registry }}/${{ inputs.docker-image-path }}
 
-    - name: Build and tag Docker image
-      if: env.IMAGE_EXISTS == 'false' || inputs.docker-tag != 'latest'
-      run: |
-        docker build -t ${{ inputs.docker-image-path }}:$COMMIT_HASH .
-        docker tag ${{ inputs.docker-image-path }}:$COMMIT_HASH ${{ inputs.docker-registry }}/${{ inputs.docker-image-path }}:$COMMIT_HASH
-      shell: bash
+        # Check if image exists
+        IMAGE_EXISTS=$(docker pull $DOCKER_IMAGE_BASE:$COMMIT_HASH > /dev/null 2>&1 && echo true || echo false)
 
-    - name: Push Docker image to registry
-      if: env.IMAGE_EXISTS == 'false' || inputs.docker-tag != 'latest'
-      run: docker push ${{ inputs.docker-registry }}/${{ inputs.docker-image-path }}:$COMMIT_HASH
-      shell: bash
+        # Build and push logic
+        if [[ "$IMAGE_EXISTS" == "false" || "${{ inputs.docker-tag }}" != "latest" ]]; then
+          echo "Building and pushing image $DOCKER_IMAGE_BASE:$COMMIT_HASH"
+          docker build -t $DOCKER_IMAGE_BASE:$COMMIT_HASH . || exit 1
+          docker push $DOCKER_IMAGE_BASE:$COMMIT_HASH || exit 1
+        else
+          echo "Image $DOCKER_IMAGE_BASE:$COMMIT_HASH already exists"
+        fi
 
-    - name: Add custom tag
-      run: docker tag ${{ inputs.docker-registry }}/${{ inputs.docker-image-path }}:$COMMIT_HASH ${{ inputs.docker-registry }}/${{ inputs.docker-image-path }}:${{ inputs.docker-tag }}
-      shell: bash
+        # Push custom tag
+        IMAGE_WITH_TAG="$DOCKER_IMAGE_BASE:${{ inputs.docker-tag }}"
+        docker tag $DOCKER_IMAGE_BASE:$COMMIT_HASH $IMAGE_WITH_TAG || exit 1
+        docker push $IMAGE_WITH_TAG || exit 1
 
-    - name: Push custom tag to registry
-      run: docker push ${{ inputs.docker-registry }}/${{ inputs.docker-image-path }}:${{ inputs.docker-tag }}
+        # Output the image with tag for further steps
+        echo "image=$IMAGE_WITH_TAG" >> $GITHUB_OUTPUT
       shell: bash
