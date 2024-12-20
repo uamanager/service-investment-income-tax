@@ -49,6 +49,14 @@ jobs:
           docker-image-path: ${{ vars.DOCKER_IMAGE_PATH }}
           docker-registry: ${{ vars.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com
 
+      - name: Prepare ECS Task Template Step
+        run: |
+          export AWS_ECS_TASK=${{ vars.AWS_ECS_TASK }}
+          export AWS_ECS_CONTAINER=${{ vars.AWS_ECS_CONTAINER }}
+          export AWS_ECS_PORT_TCP_80_NAME=${{ vars.AWS_ECS_PORT_TCP_80_NAME }}
+          envsubst < ./.aws/ecs/task-definition-template.json > ./.aws/ecs/task-definition.json
+        shell: bash
+
       - name: Render ECS Task Template Step
         id: render-ecs-task-template
         uses: aws-actions/amazon-ecs-render-task-definition@v1
@@ -65,7 +73,7 @@ jobs:
             awslogs-region=${{ vars.AWS_REGION }}
             awslogs-stream-prefix=${{ vars.AWS_CLOUDWATCH_STREAM_PREFIX }}
 
-      - name: Deploy to Amazon ECS service Step
+      - name: Deploy to Amazon ECS Step
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ steps.render-ecs-task-template.outputs.task-definition }}
