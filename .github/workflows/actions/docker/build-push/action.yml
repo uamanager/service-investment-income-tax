@@ -17,11 +17,13 @@ inputs:
 outputs:
   image:
     description: 'Docker image name with tag, e.g. registry.hub.docker.com/apps/server:latest'
+    value: ${{ steps.build-and-push-docker-image.outputs.image }}
 
 runs:
   using: 'composite'
   steps:
     - name: Build and push Docker image Step
+      id: build-and-push-docker-image
       run: |
         # Determine commit hash and image base
         COMMIT_HASH=$(git rev-parse --short HEAD)
