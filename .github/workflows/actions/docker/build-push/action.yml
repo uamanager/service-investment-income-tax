@@ -14,6 +14,10 @@ inputs:
     default: 'latest'
     required: false
 
+outputs:
+  image:
+    description: 'Docker image name with tag, e.g. registry.hub.docker.com/apps/server:latest'
+
 runs:
   using: 'composite'
   steps:
