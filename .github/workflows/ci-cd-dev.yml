@@ -73,6 +73,10 @@ jobs:
             awslogs-group=${{ vars.AWS_CLOUDWATCH_GROUP }}
             awslogs-region=${{ vars.AWS_REGION }}
             awslogs-stream-prefix=${{ vars.AWS_CLOUDWATCH_STREAM_PREFIX }}
+          environment-variables: |
+            LOG_LEVEL=info
+            NODE_ENV=production
+            PORT=80
 
       - name: Deploy to Amazon ECS Step
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
