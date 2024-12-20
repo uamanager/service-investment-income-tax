@@ -19,8 +19,8 @@ jobs:
     name: Lint/Test/Build Job
     uses: ./.github/workflows/lint-test-build.yml
 
-  aws-ecr-build-and-push:
-    name: AWS ECR Build and Push Job
+  push-deploy:
+    name: Push/Deploy Job
     needs: lint-test-build
     environment:
       name: DEV
@@ -43,7 +43,32 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build and Push Image Step
+        id: build-and-push-image
         uses: ./.github/workflows/actions/docker/build-push
         with:
           docker-image-path: ${{ vars.DOCKER_IMAGE_PATH }}
           docker-registry: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com
+
+      - name: Render ECS Task Template Step
+        id: render-ecs-task-template
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ./.aws/ecs/task-definition.json
+          task-definition-family: ${{ vars.AWS_ECS_TASK }}
+          container-name: ${{ vars.AWS_ECS_CONTAINER }}
+          image: ${{ steps.build-and-push-image.image }}
+          task-definition-revision: ${{ github.sha }}
+          log-configuration-log-driver: awslogs
+          log-configuration-options: |
+            awslogs-create-group=true
+            awslogs-group=${{ vars.AWS_CLOUDWATCH_GROUP }}
+            awslogs-region=${{ vars.AWS_REGION }}
+            awslogs-stream-prefix=${{ vars.AWS_CLOUDWATCH_STREAM_PREFIX }}
+
+      - name: Deploy to Amazon ECS service Step
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.render-ecs-task-template.outputs.task-definition }}
+          cluster: ${{ vars.AWS_ECS_CLUSTER }}
+          service: ${{ vars.AWS_ECS_SERVICE }}
+          wait-for-service-stability: true
