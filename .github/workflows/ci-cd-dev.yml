@@ -47,7 +47,7 @@ jobs:
         uses: ./.github/workflows/actions/docker/build-push
         with:
           docker-image-path: ${{ vars.DOCKER_IMAGE_PATH }}
-          docker-registry: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com
+          docker-registry: ${{ vars.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com
 
       - name: Render ECS Task Template Step
         id: render-ecs-task-template
