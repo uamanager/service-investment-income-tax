@@ -9,12 +9,14 @@ concurrency:
   group: ci-cd-dev
   cancel-in-progress: true
 
+permissions:
+  contents: read
+  actions: read
+  id-token: write
+
 jobs:
   lint-test-build:
     name: Lint/Test/Build Job
-    permissions:
-      contents: read
-      actions: read
     uses: ./.github/workflows/lint-test-build.yml
 
   aws-ecr-build-and-push:
@@ -32,8 +34,8 @@ jobs:
       - name: Setup AWS Step
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          role-session-name: {{ vars.AWS_ROLE_SESSION_NAME }}
           aws-region: ${{ vars.AWS_REGION }}
 
       - name: Login to Amazon ECR
