@@ -1,0 +1,87 @@
+name: CI/CD DEV Workflow
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ci-cd-dev
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  actions: read
+  id-token: write
+
+jobs:
+  lint-test-build:
+    name: Lint/Test/Build Job
+    uses: ./.github/workflows/lint-test-build.yml
+
+  push-deploy:
+    name: Push/Deploy Job
+    needs: lint-test-build
+    environment:
+      name: DEV
+      url: https://dev-tax.uamanager.dev
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Step
+        uses: actions/checkout@v4
+
+      - name: Setup AWS Step
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          role-session-name: ${{ vars.AWS_ROLE_SESSION_NAME }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and Push Image Step
+        id: build-and-push-image
+        uses: ./.github/workflows/actions/docker/build-push
+        with:
+          docker-image-path: ${{ vars.DOCKER_IMAGE_PATH }}
+          docker-registry: ${{ vars.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com
+
+      - name: Prepare ECS Task Template Step
+        run: |
+          export AWS_ECS_TASK=${{ vars.AWS_ECS_TASK }}
+          export AWS_ECS_CONTAINER=${{ vars.AWS_ECS_CONTAINER }}
+          export AWS_ECS_PORT_TCP_80_NAME=${{ vars.AWS_ECS_PORT_TCP_80_NAME }}
+          export AWS_ECS_TASK_EXECUTION_ROLE_ARN=${{ vars.AWS_ECS_TASK_EXECUTION_ROLE_ARN }}
+          envsubst < ./.aws/ecs/task-definition-template.json > ./.aws/ecs/task-definition.json
+        shell: bash
+
+      - name: Render ECS Task Template Step
+        id: render-ecs-task-template
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ./.aws/ecs/task-definition.json
+          task-definition-family: ${{ vars.AWS_ECS_TASK }}
+          container-name: ${{ vars.AWS_ECS_CONTAINER }}
+          image: ${{ steps.build-and-push-image.outputs.image }}
+          task-definition-revision: ${{ github.sha }}
+          log-configuration-log-driver: awslogs
+          log-configuration-options: |
+            awslogs-create-group=true
+            awslogs-group=${{ vars.AWS_CLOUDWATCH_GROUP }}
+            awslogs-region=${{ vars.AWS_REGION }}
+            awslogs-stream-prefix=${{ vars.AWS_CLOUDWATCH_STREAM_PREFIX }}
+          environment-variables: |
+            LOG_LEVEL=info
+            NODE_ENV=production
+            PORT=80
+
+      - name: Deploy to Amazon ECS Step
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.render-ecs-task-template.outputs.task-definition }}
+          cluster: ${{ vars.AWS_ECS_CLUSTER }}
+          service: ${{ vars.AWS_ECS_SERVICE }}
+          wait-for-service-stability: true
