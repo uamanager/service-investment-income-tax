@@ -1,12 +1,12 @@
-name: CI/CD DEV Workflow
+name: CI/CD PROD Workflow
 on:
   workflow_dispatch:
   push:
-    branches:
-      - main
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
 
 concurrency:
-  group: ci-cd-dev
+  group: ci-cd-prod
   cancel-in-progress: true
 
 permissions:
@@ -23,8 +23,8 @@ jobs:
     name: Push/Deploy Job
     needs: lint-test-build
     environment:
-      name: DEV
-      url: https://dev-tax.uamanager.dev
+      name: PROD
+      url: https://tax.uamanager.dev
     runs-on: ubuntu-latest
 
     steps:
@@ -48,6 +48,7 @@ jobs:
         with:
           docker-image-path: ${{ vars.DOCKER_IMAGE_PATH }}
           docker-registry: ${{ vars.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com
+          docker-tag: ${{ github.ref_name }}
 
       - name: Prepare ECS Task Template Step
         run: |
