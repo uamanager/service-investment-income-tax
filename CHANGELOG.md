@@ -1,3 +1,5 @@
+## [1.0.0-beta.2](https://github.com/uamanager/service-investment-income-tax/compare/v1.0.0-beta.1...v1.0.0-beta.2) (2024-12-22)
+
 ## 1.0.0-beta.1 (2024-12-22)
 
 
