@@ -6,7 +6,7 @@ on:
     - cron: '0 0 * * *'
 
 jobs:
-  artillery:
+  performance-test:
     runs-on: ubuntu-latest
 
     steps:

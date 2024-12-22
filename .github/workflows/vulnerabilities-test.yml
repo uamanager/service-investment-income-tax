@@ -3,7 +3,7 @@ name: Vulnerabilities Test Workflow
 on: push
 
 jobs:
-  artillery:
+  vulnerabilities-test:
     runs-on: ubuntu-latest
 
     steps:
