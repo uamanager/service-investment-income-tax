@@ -31,6 +31,13 @@ jobs:
         with:
           main-branch-name: 'main'
 
+      - name: Snyk Scan Step
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command: monitor
+
       - name: Lint Affected Step
         run: yarn nx affected -t lint --parallel=3
 
