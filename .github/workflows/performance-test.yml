@@ -10,17 +10,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Step
         uses: actions/checkout@v4
 
-      - name: Make performance test reports directory
+      - name: Setup Step
         run: mkdir reports
 
-      - name: Execute performance tests
+      - name: Performance Test Step
         uses: artilleryio/action-cli@v1
         with:
           command: run tools/perf/tax-calculate.perf.yml --output reports/report.json --tags ci:true,repo:repo_name,,commit:${{ github.sha }}
-      - name: Upload performance test report
+
+      - name: Upload Report Step
         uses: actions/upload-artifact@v4
         if: always()
         with:

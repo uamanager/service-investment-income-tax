@@ -1,0 +1,23 @@
+name: Vulnerabilities Test Workflow
+
+on: push
+
+jobs:
+  artillery:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Step
+        uses: actions/checkout@v4
+
+      - name: Vulnerabilities Test Step
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --sarif-file-output=snyk.sarif
+
+      - name: Upload Report Step
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: snyk.sarif
