@@ -1,0 +1,53 @@
+name: Docker Build/Push Workflow
+description: Build and Push Image to Docker Registry
+
+inputs:
+  docker-image-path:
+    description: 'Docker image path, e.g. apps/server'
+    required: true
+  docker-registry:
+    description: 'Docker registry name, e.g. registry.hub.docker.com'
+    default: 'registry.hub.docker.com'
+    required: false
+  docker-tag:
+    description: 'Docker tag, e.g. dev'
+    default: 'latest'
+    required: false
+
+outputs:
+  image:
+    description: 'Docker image name with tag, e.g. registry.hub.docker.com/apps/server:latest'
+    value: ${{ steps.build-and-push-docker-image.outputs.image }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Build and push Docker image Step
+      id: build-and-push-docker-image
+      run: |
+        # Determine commit hash and image base
+        COMMIT_HASH=$(git rev-parse --short HEAD)
+        DOCKER_IMAGE_BASE=${{ inputs.docker-registry }}/${{ inputs.docker-image-path }}
+
+        # Check if image exists
+        IMAGE_EXISTS=$(docker pull $DOCKER_IMAGE_BASE:$COMMIT_HASH > /dev/null 2>&1 && echo true || echo false)
+
+        # Build and push logic
+        if [[ "$IMAGE_EXISTS" == "false" || "${{ inputs.docker-tag }}" != "latest" ]]; then
+          echo "Building image $DOCKER_IMAGE_BASE:$COMMIT_HASH"
+          docker build -t $DOCKER_IMAGE_BASE:$COMMIT_HASH . || exit 1
+          echo "Built image $DOCKER_IMAGE_BASE:$COMMIT_HASH"
+        else
+          echo "Image $DOCKER_IMAGE_BASE:$COMMIT_HASH already exists"
+        fi
+
+        IMAGE_WITH_TAG="$DOCKER_IMAGE_BASE:${{ inputs.docker-tag }}"
+        docker tag $DOCKER_IMAGE_BASE:$COMMIT_HASH $IMAGE_WITH_TAG || exit 1
+        
+        echo "Pushing image $DOCKER_IMAGE_BASE:$COMMIT_HASH"
+        docker push --all-tags $DOCKER_IMAGE_BASE || exit 1
+        echo "Pushed image $DOCKER_IMAGE_BASE:$COMMIT_HASH"
+
+        # Output the image with tag for further steps
+        echo "image=$(echo $IMAGE_WITH_TAG)" >> $GITHUB_OUTPUT
+      shell: bash

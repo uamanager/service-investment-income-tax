@@ -1,0 +1,29 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "esnext",
+    "lib": ["es2020", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@investment-income-tax/server-api-tax": ["libs/server/api/tax/src/index.ts"],
+      "@investment-income-tax/server-common": ["libs/server/common/src/index.ts"],
+      "@investment-income-tax/server-domain-rate": [
+        "libs/server/domain/rate/src/index.ts"
+      ],
+      "@investment-income-tax/server-domain-tax": [
+        "libs/server/domain/tax/src/index.ts"
+      ]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}

@@ -1,0 +1,29 @@
+config:
+  target: "https://tax.uamanager.dev"
+  phases:
+    - duration: 60
+      arrivalRate: 50
+
+scenarios:
+  - flow:
+      - post:
+          url: "/api/v1/tax/calculate"
+          json:
+            year: 2023
+            transactions:
+              - ticker: "AAPL"
+                date: "2023-01-01"
+                type: "BUY"
+                currency: "USD"
+                price: 100
+                qty: 1
+                fee_currency: "USD"
+                fee_total_amount: 10
+              - ticker: "AAPL"
+                date: "2023-01-01"
+                type: "SELL"
+                currency: "USD"
+                price: 100
+                qty: 1
+                fee_currency: "USD"
+                fee_total_amount: 10
