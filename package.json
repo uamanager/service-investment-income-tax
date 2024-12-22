@@ -14,7 +14,8 @@
     "e2e:ci": "nx run-many --target=e2e --all --parallel --configuration=ci",
     "build:all": "nx run-many --target=build --all --parallel",
     "build:all:prod": "nx run-many --target=build --all --parallel --configuration=production",
-    "format": "nx format:write"
+    "format": "nx format:write",
+    "release": "semantic-release"
   },
   "private": true,
   "dependencies": {
@@ -56,7 +57,6 @@
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/commit-analyzer": "^13.0.0",
     "@semantic-release/git": "^10.0.1",
-    "@semantic-release/github": "^11.0.1",
     "@semantic-release/npm": "^12.0.1",
     "@semantic-release/release-notes-generator": "^14.0.1",
     "@swc-node/register": "~1.9.1",
