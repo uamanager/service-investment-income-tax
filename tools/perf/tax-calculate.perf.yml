@@ -7,10 +7,10 @@ config:
       name: Warm up phase
     - duration: 60
       arrivalRate: 10
-      rampTo: 250
+      rampTo: 200
       name: Ramp up to peak load
     - duration: 120
-      arrivalRate: 250
+      arrivalRate: 200
       name: Sustained peak load
 
   processor: "./payload.processor.mjs"
