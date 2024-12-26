@@ -19,7 +19,7 @@ jobs:
       - name: Performance Test Step
         uses: artilleryio/action-cli@v1
         with:
-          command: run tools/perf/tax-calculate.perf.yml --output reports/report.json --tags ci:true,repo:repo_name,,commit:${{ github.sha }}
+          command: run tools/perf/tax-calculate.perf.yml --output reports/report.json --tags ci:true,repo:repo_name,commit:${{ github.sha }} --record --key ${{ secrets.ARTILLERY_KEY }}
 
       - name: Upload Report Step
         uses: actions/upload-artifact@v4
