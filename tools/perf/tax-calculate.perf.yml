@@ -5,28 +5,29 @@ config:
       arrivalRate: 1
       rampTo: 150
 
-  processor: "./payload.processor.js"
+  processor: "./payload.processor.mjs"
 
 scenarios:
   - flow:
       - post:
           url: "/api/v1/tax/calculate"
+          beforeRequest: "randomOperationsPair"
           json:
             year: 2023
             transactions:
               - ticker: "AAPL"
-                date: "{{ randomDate('2022-01-01', '2022-12-31') }}"
+                date: "{{ buy_date }}"
                 type: "BUY"
                 currency: "USD"
-                price: "{{ randomInt(400, 450) }}"
-                qty: "{{ randomInt(100, 200) }}"
+                price: "{{ buy_price }}"
+                qty: "{{ buy_qty }}"
                 fee_currency: "USD"
-                fee_total_amount: "{{ randomInt(10, 50) }}"
+                fee_total_amount: "{{ buy_fee_total_amount }}"
               - ticker: "AAPL"
-                date: "{{ randomDate('2023-01-01', '2023-12-31') }}"
+                date: "{{ sell_date }}"
                 type: "SELL"
                 currency: "USD"
-                price: "{{ randomInt(300, 550) }}"
-                qty: "{{ randomInt(50, 100) }}"
+                price: "{{ sell_price }}"
+                qty: "{{ sell_qty }}"
                 fee_currency: "USD"
-                fee_total_amount: "{{ randomInt(10, 50) }}"
+                fee_total_amount: "{{ sell_fee_total_amount }}"
