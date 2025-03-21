@@ -2,8 +2,9 @@ import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common
 import { TaxRequestDtoBodyTransaction } from './dto/tax.request.dto';
 import { TaxResponseDto } from './dto/tax.response.dto';
 import { LoggerHelper } from '@investment-income-tax/server-common';
-import { TaxService, TransactionRecord } from '@investment-income-tax/server-domain-tax';
+import { TaxService } from '@investment-income-tax/server-domain-tax';
 import { RateService } from '@investment-income-tax/server-domain-rate';
+import { Transaction } from '@investment-income-tax/core';
 
 @Injectable()
 export class TaxApiService {
@@ -22,7 +23,7 @@ export class TaxApiService {
     transactions: TaxRequestDtoBodyTransaction[],
   ): Promise<TaxResponseDto> {
     try {
-      const _transactions = [];
+      const _transactions: Transaction[] = [];
 
       for (const transaction of transactions) {
         const _currency_rate = await this.$_rate.getRate(
@@ -34,7 +35,7 @@ export class TaxApiService {
           transaction.date,
         );
         _transactions.push(
-          new TransactionRecord(
+          new Transaction(
             transaction.ticker,
             transaction.date,
             transaction.type,

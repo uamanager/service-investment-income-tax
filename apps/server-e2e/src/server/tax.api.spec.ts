@@ -1,7 +1,11 @@
 import request from 'supertest';
 import { Test } from '@nestjs/testing';
 import { INestApplication, Logger } from '@nestjs/common';
-import { TaxApiModule } from '@investment-income-tax/server-api-tax';
+import {
+  TaxApiModule,
+  TaxRequestDtoBodyTransaction,
+} from '@investment-income-tax/server-api-tax';
+import { TransactionType } from '@investment-income-tax/core';
 
 const API_PATH = '/tax/calculate';
 describe('POST /api/v1/tax/calculate', () => {
@@ -24,7 +28,7 @@ describe('POST /api/v1/tax/calculate', () => {
   it('should be fine with minimal required data', () => {
     // GIVEN
     const _year = new Date().getFullYear();
-    const _transactions = [];
+    const _transactions: TaxRequestDtoBodyTransaction[] = [];
 
     // WHEN
     return (
@@ -59,15 +63,15 @@ describe('POST /api/v1/tax/calculate', () => {
     );
   });
 
-  it.each([['BUY'], ['SELL'], ['DIVS']])(
+  it.each([[TransactionType.BUY], [TransactionType.SELL], [TransactionType.DIVS]])(
     'should be fine with %s transaction from previous year',
     async (type) => {
       // GIVEN
       const _year = new Date().getFullYear();
-      const _transactions = [
+      const _transactions: TaxRequestDtoBodyTransaction[] = [
         {
           date: new Date(_year - 1, 0, 1),
-          type: 'BUY',
+          type: TransactionType.BUY,
           ticker: 'AAPL',
           currency: 'USD',
           price: 100,

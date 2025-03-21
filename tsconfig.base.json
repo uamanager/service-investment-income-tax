@@ -15,14 +15,13 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@investment-income-tax/core": ["libs/core/src/index.ts"],
       "@investment-income-tax/server-api-tax": ["libs/server/api/tax/src/index.ts"],
       "@investment-income-tax/server-common": ["libs/server/common/src/index.ts"],
       "@investment-income-tax/server-domain-rate": [
         "libs/server/domain/rate/src/index.ts"
       ],
-      "@investment-income-tax/server-domain-tax": [
-        "libs/server/domain/tax/src/index.ts"
-      ]
+      "@investment-income-tax/server-domain-tax": ["libs/server/domain/tax/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

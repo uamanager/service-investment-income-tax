@@ -1,5 +1,5 @@
 import { Order } from './order.class';
-import { TransactionRecord } from './transaction-record.class';
+import { Transaction } from './transaction.class';
 
 export class TaxRecord {
   date: Date;
@@ -33,7 +33,7 @@ export class TaxRecord {
     return new TaxRecord(order.date, order.ticker, _incomeTotal, _expensesTotal);
   }
 
-  static fromDivTransaction(transaction: TransactionRecord) {
+  static fromDivTransaction(transaction: Transaction) {
     return new TaxRecord(
       transaction.date,
       transaction.ticker,

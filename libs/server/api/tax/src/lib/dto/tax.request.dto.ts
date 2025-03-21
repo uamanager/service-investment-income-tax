@@ -9,7 +9,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { TransactionType } from '@investment-income-tax/server-domain-tax';
+import { TransactionType } from '@investment-income-tax/core';
 
 export class TaxRequestDtoBodyTransaction {
   @ApiProperty({
